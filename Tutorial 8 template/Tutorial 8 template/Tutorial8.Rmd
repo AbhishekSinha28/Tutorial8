@@ -46,13 +46,40 @@ library(bookdown)
 
 ```
 
+```{r Getting Data, echo = TRUE, message = FALSE, warning = FALSE}
+data<- read_csv("Data/worldwidecases.csv")
+```
 
+```{r structure}
+glimpse(data)
+```
+
+```{r}
+unique(data$countriesAndTerritories)
+```
+# Analysis
+
+On looking at the datatype it can be seen that ‘date’ has an incorrect datatype. Date cannot be a character. The ‘data’ is converted to date time object. 
+```{r}
+data <- data %>% 
+  mutate(dateRep = as.Date(dateRep, "%d/%m/%y"))
+
+glimpse(data)
+```
 
 \section*{Country XX1 and YY1"}
 
 \section*{Country XX2 and YY2}
 
 \section*{Country XX3 and YY3}
+
+```{r confirmed cases by countries}
+data %>%
+  group_by(geoid) %>%
+  summarise(confirmed_cases = max(confirmed)) %>%
+  kable(caption = "Table 2") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
 
 
 
