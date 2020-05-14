@@ -43,7 +43,7 @@ library(tidyverse)
 library(readr)
 library(kableExtra)
 library(bookdown)
-
+library(ggplot2)
 ```
 
 ```{r Getting Data, echo = TRUE, message = FALSE, warning = FALSE}
@@ -54,9 +54,6 @@ data<- read_csv("Data/worldwidecases.csv")
 glimpse(data)
 ```
 
-```{r}
-unique(data$countriesAndTerritories)
-```
 # Analysis
 
 On looking at the datatype it can be seen that ‘date’ has an incorrect datatype. Date cannot be a character. The ‘data’ is converted to date time object. 
@@ -69,16 +66,35 @@ glimpse(data)
 
 \section*{Country XX1 and YY1"}
 
-\section*{Country XX2 and YY2}
+\section2{Country India and Italy}
 
 \section*{Country XX3 and YY3}
 
 ```{r confirmed cases by countries}
-data %>%
-  group_by(geoid) %>%
-  summarise(confirmed_cases = max(confirmed)) %>%
-  kable(caption = "Table 2") %>%
+data_section2 <- data%>%
+  filter(countriesAndTerritories %in% c("India","Italy"))
+
+data_section2
+```  
+
+
+```{r confirmed cases by states}
+data_section2 %>%
+  group_by(countryterritoryCode) %>%
+  summarise(confirmed_cases = sum(cases)) %>%
+  kable(caption = "Table 1") %>%
   kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+We will be using logarithmic plot to plot.
+```{r, fig.cap= "Figure 1"}
+# Examining the situation in Australia
+data_section2 %>%
+  group_by(dateRep,countriesAndTerritories) %>%
+  summarise(confirmed_cases = sum(cases)) %>%
+  ggplot(aes(x = dateRep, y = confirmed_cases)) +
+  geom_line() + scale_y_continuous(trans = "log10", labels = scales::comma)
+
 ```
 
 
